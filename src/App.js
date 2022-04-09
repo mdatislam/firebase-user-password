@@ -8,6 +8,8 @@ import {
   createUserWithEmailAndPassword, 
   signOut,
   signInWithEmailAndPassword,
+  sendEmailVerification,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -74,6 +76,7 @@ function App() {
         console.log(user)
         setEmail('')
         setPassword('')
+        verifyEmail();
       })
       .catch(error=>{
         console.error(error)
@@ -87,6 +90,23 @@ function App() {
 
   const handleRegister = event=>{
     setRegister( event.target.checked )
+  }
+
+  const verifyEmail=()=>{
+    sendEmailVerification(auth.currentUser)
+    .then(()=>{
+      console.log('Verification mail sent')
+    })
+  }
+  const handleResetPassword=()=>{
+    sendPasswordResetEmail(auth,email)
+    .then(()=>{
+      console.log('sent reset mail')
+    })
+    .catch(error=>{
+      console.error(error)
+      setError(error.message)
+    })
   }
   return (
     <div >
@@ -108,11 +128,14 @@ function App() {
         <Form.Group className="mb-3" controlId="formBasicCheckbox">
     <Form.Check onChange={handleRegister} type="checkbox" label="Already have Registered ?" />
   </Form.Group>
+  <Button onClick={handleResetPassword} variant="link">Forget password ?</Button> <br />
         <Button variant="primary" type="submit">
         {register?'Log-In':'Register'}
         </Button>
       </Form>
+
       <p className="text-danger">{error}</p>
+
       </div>
 
       <div className="container mt-5 py-4">
