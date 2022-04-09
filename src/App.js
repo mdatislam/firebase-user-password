@@ -10,6 +10,7 @@ import {
   signInWithEmailAndPassword,
   sendEmailVerification,
   sendPasswordResetEmail,
+  updateProfile,
 } from "firebase/auth";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -21,8 +22,10 @@ const auth = getAuth(app);
 
 function App() {
   const [user, setUser] = useState({});
+  const [name,setName]= useState('')
   const [email,setEmail]= useState('')
   const [password,setPassword]=useState('')
+  const [success, setSuccess]=useState('')
   const [error,setError]=useState('')
   const [register,setRegister]=useState(false)
   const googleProvider = new GoogleAuthProvider();
@@ -48,7 +51,9 @@ function App() {
   };
 
   // Form Part Start Here
-  
+  const handleNameBlur=(e)=>{
+      setName(e.target.value)
+  }
   const handlemailblur = (e) => {
     setEmail(e.target.value);
   };
@@ -63,6 +68,7 @@ function App() {
         console.log(user)
         setEmail('')
         setPassword('')
+        setSuccess('Log-in success')
       })
       .catch(error=>{
         console.error(error)
@@ -77,6 +83,8 @@ function App() {
         setEmail('')
         setPassword('')
         verifyEmail();
+        updateName();
+        setSuccess('User Create success')
       })
       .catch(error=>{
         console.error(error)
@@ -108,11 +116,31 @@ function App() {
       setError(error.message)
     })
   }
+  const updateName = ()=>{
+    updateProfile(auth.currentUser,{
+      displayName:name,
+    })
+    .then(()=>{
+      console.log('updating Name')
+    })
+    .catch(error=>{
+      setError(error.message)
+    })
+  }
   return (
     <div >
       <div className="registration w-50 mx-auto">
         <h3>Please {register?'Log-In':'Register'}</h3>
       <Form onSubmit={ handleFormSubmit}>
+      { !register &&
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Your Name</Form.Label>
+        <Form.Control onBlur={handleNameBlur} type="text" placeholder="Enter your Name" required />
+        <Form.Text className="text-muted">
+        </Form.Text>
+      </Form.Group>
+
+      }
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control onBlur={handlemailblur} type="email" placeholder="Enter email" required />
@@ -133,7 +161,7 @@ function App() {
         {register?'Log-In':'Register'}
         </Button>
       </Form>
-
+      <p className="text-success"> {success}</p>
       <p className="text-danger">{error}</p>
 
       </div>
