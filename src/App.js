@@ -129,8 +129,8 @@ function App() {
   }
   return (
     <div >
-      <div className="registration w-50 mx-auto">
-        <h3>Please {register?'Log-In':'Register'}</h3>
+      <div className="registration w-50 mx-auto border border-info p-3 mt-3">
+        <h3 className="text-danger text-center">Please {register?'Log-In':'Register'}</h3>
       <Form onSubmit={ handleFormSubmit}>
       { !register &&
         <Form.Group className="mb-3" controlId="formBasicEmail">
